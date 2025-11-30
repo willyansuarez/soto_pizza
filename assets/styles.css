@@ -1,0 +1,64 @@
+/* Fuentes personalizadas para un mejor look */
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f7fafc;
+}
+
+/* Estilo para las pestañas */
+.tab-btn {
+    white-space: nowrap;
+}
+
+/* La clase .tab-btn.active usará clases Tailwind añadidas por JS */
+
+/* Contenedor de la pizza para los ingredientes */
+.pizza-canvas {
+    position: relative;
+    max-width: 300px;
+    width: 100%;
+}
+
+/* Imagen de los ingredientes sobre la pizza */
+.pizza-topping {
+    position: absolute;
+    width: 65px;
+    height: 65px;
+    transition: all 0.3s ease-out;
+    transform: scale(0);
+    cursor: pointer;
+}
+
+/* Estilo de los ingredientes al hacer clic */
+.ingredient-item {
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.ingredient-item:hover {
+    transform: scale(1.05);
+}
+
+/* Estilo del modal */
+dialog {
+    border: none;
+    border-radius: 12px;
+    padding: 2.5rem;
+    max-width: 500px;
+    background-color: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 1024px) {
+    /* En pantallas grandes, usamos grid para la vista en dos columnas */
+    .main-content-flex {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+}

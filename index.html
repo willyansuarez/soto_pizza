@@ -3,83 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizzería: Tu Pizza a la Medida</title>
+    <title>Soto Pizza's: Tu Pizza a la Medida</title>
     <!-- Incluyendo Tailwind CSS para un estilo moderno y responsivo -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <style>
-        /* Fuentes personalizadas para un mejor look */
-        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;500;600;700&display=swap');
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f7fafc;
-        }
-
-        /* Estilo para las pestañas */
-        .tab-btn {
-            white-space: nowrap;
-        }
-
-        .tab-btn.active {
-            @apply bg-orange-600 text-white shadow-lg;
-        }
-
-        /* Contenedor de la pizza para los ingredientes */
-        .pizza-canvas {
-            position: relative;
-            max-width: 300px;
-            width: 100%;
-        }
-        
-        /* Imagen de los ingredientes sobre la pizza */
-        .pizza-topping {
-            position: absolute;
-            width: 65px; /* Tamaño reducido para los ingredientes */
-            height: 65px;
-            transition: all 0.3s ease-out; /* Transición suave para que los ingredientes aparezcan flotando */
-            transform: scale(0); /* Inicialmente oculto */
-            cursor: pointer;
-        }
-
-        /* Estilo de los ingredientes al hacer clic */
-        .ingredient-item {
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .ingredient-item:hover {
-            transform: scale(1.05);
-        }
-
-        /* Estilo del modal */
-        dialog {
-            border: none;
-            border-radius: 12px;
-            padding: 2.5rem;
-            max-width: 500px;
-            background-color: white;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        dialog::backdrop {
-            background: rgba(0, 0, 0, 0.5);
-        }
-        
-        @media (min-width: 1024px) {
-            /* En pantallas grandes, usamos grid para la vista en dos columnas */
-            .main-content-flex {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 2rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Encabezado -->
     <header class="bg-orange-500 text-white p-4 text-center shadow-md">
-        <h1 class="text-4xl font-bold font-['Pacifico'] tracking-wide">Pizzería El Sabor</h1>
+        <h1 class="text-4xl font-bold font-['Pacifico'] tracking-wide">Soto Pizza's</h1>
         <p class="mt-1 text-sm">Crea tu pizza perfecta y pide ahora</p>
     </header>
 
@@ -125,6 +58,11 @@
             <!-- Área para montar la pizza. Ahora va primero en mobile para facilitar el arrastre. -->
             <div class="flex-1 w-full flex flex-col items-center lg:sticky lg:top-4">
                 <h2 class="text-2xl font-bold mb-4 text-center text-orange-600">Haz clic para agregar o eliminar ingredientes</h2>
+                <div class="w-full flex justify-center mb-3">
+                    <button id="toggle-base-btn" class="px-4 py-2 rounded-full text-sm font-semibold bg-gray-200 text-gray-800 hover:bg-gray-300">
+                        Seleccionar Pizza Base (Bs. <span id="base-price-label">5.00</span>)
+                    </button>
+                </div>
                 <div id="pizza-base-container" class="pizza-canvas aspect-square rounded-full shadow-xl overflow-hidden border-8 border-yellow-400">
                     <img id="pizza-base-image" src="https://placehold.co/600x600/FFD966/ffffff?text=Pizza+Base" alt="Base de Pizza" class="w-full h-full object-cover">
                     <!-- Los ingredientes se colocarán aquí -->
@@ -198,6 +136,7 @@
         // Variables globales para rastrear el estado del pedido
         let totalPrice = 0;
         const basePizzaPrice = 5.00; 
+        let baseSelected = false;
         let selectedToppings = [];
         let selectedDrinks = {};
         let selectedDesserts = {};
@@ -235,6 +174,8 @@
         const tabPanels = document.querySelectorAll('.tab-panel');
         const ingredientsList = document.getElementById('ingredients-list');
         const pizzaBaseContainer = document.getElementById('pizza-base-container');
+        const toggleBaseBtn = document.getElementById('toggle-base-btn');
+        const basePriceLabel = document.getElementById('base-price-label');
         const orderModal = document.getElementById('order-modal');
         const finalModal = document.getElementById('final-modal');
         const warningModal = document.getElementById('warning-modal');
@@ -271,14 +212,14 @@
         function isOrderEmpty() {
             const hasDrinks = Object.values(selectedDrinks).some(qty => qty > 0);
             const hasDesserts = Object.values(selectedDesserts).some(qty => qty > 0);
-            return selectedToppings.length === 0 && !hasDrinks && !hasDesserts;
+            return !baseSelected && selectedToppings.length === 0 && !hasDrinks && !hasDesserts;
         }
 
         // Función para actualizar el total
         function updateTotal() {
             totalPrice = 0; 
             
-            if (selectedToppings.length > 0) {
+            if (baseSelected) {
                 totalPrice += basePizzaPrice;
             }
 
@@ -384,6 +325,25 @@
             }
         });
 
+        // Toggle de pizza base
+        function updateBaseButtonUI() {
+            if (baseSelected) {
+                toggleBaseBtn.classList.remove('bg-gray-200','text-gray-800');
+                toggleBaseBtn.classList.add('bg-green-600','text-white');
+                toggleBaseBtn.textContent = `Pizza Base seleccionada (Bs. ${basePizzaPrice.toFixed(2)})`;
+            } else {
+                toggleBaseBtn.classList.remove('bg-green-600','text-white');
+                toggleBaseBtn.classList.add('bg-gray-200','text-gray-800');
+                toggleBaseBtn.textContent = `Seleccionar Pizza Base (Bs. ${basePizzaPrice.toFixed(2)})`;
+            }
+        }
+
+        toggleBaseBtn.addEventListener('click', () => {
+            baseSelected = !baseSelected;
+            updateBaseButtonUI();
+            updateTotal();
+        });
+
         // Eliminar ingrediente de la pizza al hacer clic sobre él
         pizzaBaseContainer.addEventListener('click', (e) => {
             const toppingImg = e.target.closest('.pizza-topping');
@@ -454,8 +414,10 @@
             summaryText += `Nombre del cliente: ${customerName}\n\n`;
             summaryText += '--- Resumen del Pedido ---\n';
 
-            if (selectedToppings.length > 0) {
+            if (baseSelected) {
                 summaryText += `Pizza Base: Bs. ${basePizzaPrice.toFixed(2)}\n`;
+            }
+            if (selectedToppings.length > 0) {
                 summaryText += 'Ingredientes Adicionales:\n';
                 selectedToppings.forEach(topping => {
                     summaryText += `- ${topping.name} (Bs. ${topping.price.toFixed(2)})\n`;
@@ -501,8 +463,10 @@
             summaryList.innerHTML = '';
             nameErrorElement.classList.add('hidden');
 
-            if (selectedToppings.length > 0) {
+            if (baseSelected) {
                 summaryList.innerHTML += `<li class="font-bold">Pizza Base: Bs. ${basePizzaPrice.toFixed(2)}</li>`;
+            }
+            if (selectedToppings.length > 0) {
                 summaryList.innerHTML += `<li class="font-bold">Ingredientes:</li>`;
                 selectedToppings.forEach(topping => {
                     summaryList.innerHTML += `<li>- ${topping.name} (Bs. ${topping.price.toFixed(2)})</li>`;
