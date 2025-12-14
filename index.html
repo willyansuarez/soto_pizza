@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <link rel="stylesheet" href="assets/styles.css">
+    <link rel="icon" type="image/png" href="img/pizza.png">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Encabezado -->
@@ -116,10 +117,10 @@
     <!-- Modal para la confirmación final y captura de pantalla -->
     <dialog id="final-modal" class="bg-gray-100">
         <div id="final-modal-content" class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 text-center flex flex-col items-center" style="min-width:320px; max-width:370px;">
-            <h3 class="text-2xl font-bold mb-2 text-green-600">¡Pedido Enviado!</h3>
-            <p class="text-gray-700 mb-4 font-semibold">Haz una captura de pantalla de la siguiente imagen y envíala por WhatsApp o Telegram.</p>
+            <h3 class="text-2xl font-bold mb-2 text-green-600">¡Pedido Realizado!</h3>
+            <p class="text-gray-700 mb-4 font-semibold">Haz una captura de pantalla de la siguiente imagen y envíala por WhatsApp o Telegram al número +584245000990.</p>
             <div id="summary-capture-container" class="bg-white p-6 rounded-lg shadow-inner border border-gray-300 w-full flex flex-col items-center" style="min-width:280px; max-width:340px;">
-                <h4 class="font-bold text-xl text-green-700 mb-2">Pizzería El Sabor</h4>
+                <h4 class="font-bold text-xl text-green-700 mb-2">Soto Pizza's</h4>
                 <pre id="final-summary-pre" class="text-left text-green-800 font-mono text-sm leading-relaxed overflow-auto mb-2" style="width:100%; padding-left:14px; padding-bottom:28px;">
                     <!-- Resumen del pedido en formato de ticket se insertará aquí -->
                 </pre>
@@ -195,6 +196,7 @@
             selectedToppings = [];
             selectedDrinks = {};
             selectedDesserts = {};
+            baseSelected = false;
             
             document.querySelectorAll('.pizza-topping').forEach(topping => {
                 topping.remove();
@@ -205,6 +207,7 @@
             });
             
             customerNameInput.value = '';
+            updateBaseButtonUI();
             updateTotal();
         }
         
@@ -410,7 +413,7 @@
         
         // Función para generar el resumen del pedido en formato de "ticket"
         function generateFinalSummary(customerName) {
-            let summaryText = '--- PEDIDO DE PIZZERÍA EL SABOR ---\n\n';
+            let summaryText = '--- PEDIDO DE SOTO PIZZA\'S ---\n\n';
             summaryText += `Nombre del cliente: ${customerName}\n\n`;
             summaryText += '--- Resumen del Pedido ---\n';
 
